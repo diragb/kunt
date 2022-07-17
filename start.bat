@@ -1,1 +1,2 @@
-venv/Scripts/python.exe c:/Users/dirag/projects/py/kunt/main.py
+CD %~dp0
+%~dp0/venv/Scripts/python.exe %~dp0/main.py
