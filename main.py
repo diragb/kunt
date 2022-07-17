@@ -6,6 +6,8 @@ import json
 from typing import List
 from playsound import playsound
 import sys
+import os
+from PIL import Image
 
 # Constants:
 class color:
@@ -50,13 +52,35 @@ def goToRandomWindow(names: List):
     win32gui.ShowWindow(target_window, win32con.SW_MAXIMIZE)
     exec('\n'.join(target['target']['exec']))
 
-def kunt():
+def do_random_shit():
   win32gui.EnumWindows(winEnumHandler, None)
   for window in current_windows:
     for target in targets:
       if target['name'] in window['name']: available_targets.append({ 'window_name': window['name'], 'target': target })
   goToRandomWindow(available_targets)
 
+def get_random_source_image():
+  images = os.listdir(os.getcwd() + '\\' + prelaunch['images']['source_directory'])
+  image = random.choice(images)
+  return os.getcwd() + '\\' + prelaunch['images']['source_directory'] + '\\' + image
+
+def replace_one_image(image_path: str):
+  target = Image.open(image_path)
+  source = Image.open(get_random_source_image())
+  if prelaunch['images']['rtl']: source = source.transpose(Image.FLIP_LEFT_RIGHT)
+  new_target = source.resize((target.width, target.height))
+  new_target.save(image_path)
+  if prelaunch['images']['replace_thumbails']:
+    thumbnail_path = image_path.replace(prelaunch['images']['match'], prelaunch['images']['thumbnail_match'])
+    thumbnail = Image.open(thumbnail_path)
+    new_thumbnail = source.resize((thumbnail.width, thumbnail.height))
+    new_thumbnail.save(thumbnail_path)
+
+def replace_images():
+  images = os.listdir(prelaunch['images']['target_directory'])
+  for image in images:
+    if (prelaunch['images']['match'] in image):
+      replace_one_image(prelaunch['images']['target_directory'] + '\\' + image)
 
 # Execution:
 if __name__ == '__main__':
@@ -64,7 +88,7 @@ if __name__ == '__main__':
   no_notification = True if '--no-notification' in arguments else False
   no_print = True if '--no-print' in arguments else False
   already_slept = False
-  start, run, repeat = map(lambda tstring: tstring2sec(tstring), prelaunch.values())
+  start, run, repeat = map(lambda tstring: tstring2sec(tstring), prelaunch['time'].values())
 
   if not no_print: print(f'🤖  { color.BOLD }{ color.BLUE }KUNT{ color.END } is running..')
   if not no_print: print(f'\
@@ -85,7 +109,8 @@ if __name__ == '__main__':
     else:
       sleep(repeat - run / 2)
     if not no_notification: playsound('assets/start.mp3')
-    kunt()
+    do_random_shit()
     sleep(run)
     if not no_notification: playsound('assets/stop.mp3')
+    if prelaunch['images']['replace']: replace_images()
     sleep(repeat - run / 2)

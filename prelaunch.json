@@ -1,5 +1,16 @@
 {
-  "start": "00:02:30",
-  "run": "00:00:15",
-  "repeat": "00:05:00"
+  "images": {
+    "replace": true,
+    "target_directory": "",
+    "match": "webcam.png",
+    "replace_thumbails": true,
+    "thumbnail_match": "webcamthumbnail.png",
+    "source_directory": "/assets/images",
+    "rtl": true
+  },
+  "time": {
+    "start": "00:02:30",
+    "run": "00:00:15",
+    "repeat": "00:05:00"
+  }
 }
