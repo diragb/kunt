@@ -1,0 +1,20 @@
+[
+  {
+    "name": "FastTrack-UI - Visual Studio Code",
+    "exec": [
+      "import actions",
+      "actions.switchTab(random.randrange(6) + 1)",
+      "actions.moveMouse()",
+      "actions.scroll()"
+    ]
+  },
+  {
+    "name": "Lambda - Google Chrome",
+    "exec": [
+      "import actions",
+      "actions.switchTab(random.randrange(6) + 1)",
+      "actions.moveMouse()",
+      "actions.scroll()"
+    ]
+  }
+]

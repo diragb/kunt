@@ -1,0 +1,1 @@
+venv/Scripts/python.exe c:/Users/dirag/projects/py/kunt/main.py
