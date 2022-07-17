@@ -16,5 +16,32 @@
       "actions.moveMouse()",
       "actions.scroll()"
     ]
+  },
+  {
+    "name": "Readyly/FastTrack-UI - Google Chrome",
+    "exec": [
+      "import actions",
+      "actions.switchTab(random.randrange(6) + 1)",
+      "actions.moveMouse()",
+      "actions.scroll()"
+    ]
+  },
+  {
+    "name": "API Gateway - Google Chrome",
+    "exec": [
+      "import actions",
+      "actions.switchTab(random.randrange(6) + 1)",
+      "actions.moveMouse()",
+      "actions.scroll()"
+    ]
+  },
+  {
+    "name": "S3 bucket - Google Chrome",
+    "exec": [
+      "import actions",
+      "actions.switchTab(random.randrange(6) + 1)",
+      "actions.moveMouse()",
+      "actions.scroll()"
+    ]
   }
 ]
