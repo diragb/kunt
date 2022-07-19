@@ -5,9 +5,13 @@ import win32gui, win32con
 import json
 from typing import List
 from playsound import playsound
+playsound('./assets/start.mp3')
 import sys
 import os
 from PIL import Image
+from pywinauto import Application
+import actions
+
 
 # Constants:
 class color:
@@ -28,6 +32,9 @@ prelaunch = json.load(open('prelaunch.json'))
 # Variables:
 current_windows = []
 available_targets = []
+last_state = {
+  'target': {}
+}
 
 
 # Functions:
@@ -38,26 +45,42 @@ def winEnumHandler(hwnd, ctx):
   if win32gui.IsWindowVisible(hwnd):
     current_windows.append({ 'hex': hex(hwnd), 'name': win32gui.GetWindowText(hwnd) })
 
-def goToRandomWindow(names: List):
+def goToRandomWindow(names: List, is_afk: bool):
   try:
     target = random.choice(names)
     target_window = win32gui.FindWindowEx(None, None, None, target['window_name'])
     win32gui.SetForegroundWindow(target_window)
     win32gui.ShowWindow(target_window, win32con.SW_MAXIMIZE)
-    exec('\n'.join(target['target']['exec']))
+    if not is_afk: exec('\n'.join(target['target']['exec']))
+    last_state['target'] = target
   except:
+    print('⚠️ Failed to bring windows to the foreground as they are minimized or have lost state.') 
     target = random.choice(names)
-    target_window = win32gui.FindWindowEx(None, None, None, target['window_name'])
-    win32gui.SetForegroundWindow(target_window)
-    win32gui.ShowWindow(target_window, win32con.SW_MAXIMIZE)
-    exec('\n'.join(target['target']['exec']))
+    app = Application(backend='uia')
+    app = app.connect(title_re=target['window_name'])
+    target_window = app.window(title_re=target['window_name'])
+    target_window.restore().maximize().set_focus()
+    if not is_afk: exec('\n'.join(target['target']['exec']))
+    last_state['target'] = target
+    print('✅ Handled window error.') 
 
-def do_random_shit():
-  win32gui.EnumWindows(winEnumHandler, None)
-  for window in current_windows:
-    for target in targets:
-      if target['name'] in window['name']: available_targets.append({ 'window_name': window['name'], 'target': target })
-  goToRandomWindow(available_targets)
+def do_random_shit(is_afk: bool):
+  try:
+    if is_afk:
+      win32gui.EnumWindows(winEnumHandler, None)
+      for window in current_windows:
+        for target in targets:
+          if target['name'] in window['name']: available_targets.append({ 'window_name': window['name'], 'target': target })
+      goToRandomWindow(available_targets, is_afk)
+    else:
+      goToRandomWindow([ last_state['target'] ], is_afk)
+  except:
+    if not is_afk:
+      actions.switchWindows(random.randrange(3) + 1)
+      actions.switchTab(random.randrange(6) + 1)
+      actions.moveMouse()
+      actions.scroll()
+      actions.spamCtrlLeftKey(random.randrange(100) + 100)
 
 def get_random_source_image():
   images = os.listdir(os.getcwd() + '\\' + prelaunch['images']['source_directory'])
@@ -67,7 +90,7 @@ def get_random_source_image():
 def replace_one_image(image_path: str):
   target = Image.open(image_path)
   source = Image.open(get_random_source_image())
-  if prelaunch['images']['rtl']: source = source.transpose(Image.FLIP_LEFT_RIGHT)
+  if prelaunch['images']['rtl']: source = source.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
   new_target = source.resize((target.width, target.height))
   new_target.save(image_path)
   if prelaunch['images']['replace_thumbails']:
@@ -81,6 +104,29 @@ def replace_images():
   for image in images:
     if (prelaunch['images']['match'] in image):
       replace_one_image(prelaunch['images']['target_directory'] + '\\' + image)
+
+def get_random_afk_image():
+  images = os.listdir(os.getcwd() + '\\' + prelaunch['images']['afk'])
+  image = random.choice(images)
+  return os.getcwd() + '\\' + prelaunch['images']['afk'] + '\\' + image
+
+def replace_one_image_with_afk(image_path: str):
+  target = Image.open(image_path)
+  source = Image.open(get_random_afk_image())
+  if prelaunch['images']['rtl']: source = source.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
+  new_target = source.resize((target.width, target.height))
+  new_target.save(image_path)
+  if prelaunch['images']['replace_thumbails']:
+    thumbnail_path = image_path.replace(prelaunch['images']['match'], prelaunch['images']['thumbnail_match'])
+    thumbnail = Image.open(thumbnail_path)
+    new_thumbnail = source.resize((thumbnail.width, thumbnail.height))
+    new_thumbnail.save(thumbnail_path)
+
+def replace_images_with_afk():
+  images = os.listdir(prelaunch['images']['target_directory'])
+  for image in images:
+    if (prelaunch['images']['match'] in image):
+      replace_one_image_with_afk(prelaunch['images']['target_directory'] + '\\' + image)
 
 # Execution:
 if __name__ == '__main__':
@@ -103,14 +149,29 @@ if __name__ == '__main__':
   ')
 
   while True:
+    is_afk = prelaunch['afk'] <= random.uniform(0, 1)
     if start != 0 and not already_slept:
       sleep(start - run / 2)
       already_slept = True
     else:
       sleep(repeat - run / 2)
-    if not no_notification: playsound('assets/start.mp3')
-    do_random_shit()
+    if not no_notification:
+      try:
+        playsound('./assets/start.mp3')
+        if not no_print: print('🔴 Stop')
+      except:
+        print('🔴 Stop')
+    do_random_shit(is_afk)
     sleep(run)
-    if not no_notification: playsound('assets/stop.mp3')
-    if prelaunch['images']['replace']: replace_images()
+    if not no_notification:
+      try:
+        playsound('./assets/stop.mp3')
+        if not no_print: print('🟢 Resume')
+      except:
+        print('🟢 Resume')
+    if prelaunch['images']['replace']:
+      if not is_afk:
+        replace_images()
+      else:
+        replace_images_with_afk()
     sleep(repeat - run / 2)

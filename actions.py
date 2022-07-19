@@ -4,6 +4,12 @@ import random
 
 
 # Functions:
+def switchWindows(tab_count = 1):
+  pyautogui.keyDown('alt')
+  for _ in range(tab_count):
+    pyautogui.keyDown('tab')
+  pyautogui.keyUp('alt')
+
 def switchTab(tab_count = 1):
   pyautogui.keyDown('ctrlleft')
   for _ in range(tab_count):
@@ -16,3 +22,7 @@ def moveMouse(x = None, y = None):
 
 def scroll():
   pyautogui.scroll(random.choice([-1, 1]) * random.randrange(500, 1000))
+
+def spamCtrlLeftKey(count = 100):
+  for _ in range(count):
+    pyautogui.keyDown('ctrlleft')

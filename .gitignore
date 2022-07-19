@@ -1,5 +1,7 @@
 # Photos
 /assets/images/*.*
+/assets/night/*.*
+/assets/AFK/*.*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
