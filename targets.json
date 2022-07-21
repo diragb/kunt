@@ -1,6 +1,6 @@
 [
   {
-    "name": "FastTrack-UI - Visual Studio Code",
+    "name": "Visual Studio Code",
     "exec": [
       "import actions",
       "actions.switchTab(random.randrange(6) + 1)",
@@ -10,7 +10,7 @@
     ]
   },
   {
-    "name": "Lambda - Google Chrome",
+    "name": "Google Chrome",
     "exec": [
       "import actions",
       "actions.switchTab(random.randrange(6) + 1)",
@@ -20,30 +20,9 @@
     ]
   },
   {
-    "name": "Readyly/FastTrack-UI - Google Chrome",
+    "name": "Google Chrome",
     "exec": [
       "import actions",
-      "actions.switchTab(random.randrange(6) + 1)",
-      "actions.moveMouse()",
-      "actions.scroll()",
-      "actions.spamCtrlLeftKey(random.randrange(100) + 100)"
-    ]
-  },
-  {
-    "name": "API Gateway - Google Chrome",
-    "exec": [
-      "import actions",
-      "actions.switchTab(random.randrange(6) + 1)",
-      "actions.moveMouse()",
-      "actions.scroll()",
-      "actions.spamCtrlLeftKey(random.randrange(100) + 100)"
-    ]
-  },
-  {
-    "name": "S3 bucket - Google Chrome",
-    "exec": [
-      "import actions",
-      "actions.switchTab(random.randrange(6) + 1)",
       "actions.moveMouse()",
       "actions.scroll()",
       "actions.spamCtrlLeftKey(random.randrange(100) + 100)"

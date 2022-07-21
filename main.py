@@ -66,13 +66,14 @@ def goToRandomWindow(names: List, is_afk: bool):
 
 def do_random_shit(is_afk: bool):
   try:
-    if not is_afk:
+    if not is_afk or len(last_state['target']) == 0:
       win32gui.EnumWindows(winEnumHandler, None)
       for window in current_windows:
         for target in targets:
           if target['name'] in window['name']: available_targets.append({ 'window_name': window['name'], 'target': target })
       goToRandomWindow(available_targets, is_afk)
     else:
+      lt = last_state['target']
       goToRandomWindow([ last_state['target'] ], is_afk)
   except:
     if not is_afk:
@@ -161,7 +162,7 @@ if __name__ == '__main__':
   while True:
     current_windows = []
     available_targets = []
-    is_afk = prelaunch['afk'] <= random.uniform(0, 1)
+    is_afk = prelaunch['afk'] >= random.uniform(0, 1)
     if start != 0 and not already_slept:
       sleep(start - run / 2)
       already_slept = True
