@@ -35,3 +35,5 @@ def scroll():
 def spamCtrlLeftKey(count = 100):
   for _ in range(count):
     pyautogui.keyDown('ctrlleft')
+    pyautogui.keyUp('ctrlleft')
+  pyautogui.keyUp('ctrlleft')
