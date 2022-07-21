@@ -165,8 +165,6 @@ if __name__ == '__main__':
     if start != 0 and not already_slept:
       sleep(start - run / 2)
       already_slept = True
-    else:
-      sleep(repeat - run / 2)
     if not no_notification:
       try:
         playsound('./assets/start.mp3')
