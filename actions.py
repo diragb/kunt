@@ -1,6 +1,7 @@
 # Packages:
 import pyautogui
 import random
+from time import sleep
 
 
 # Functions:
@@ -9,6 +10,14 @@ def switchWindows(tab_count = 1):
   for _ in range(tab_count):
     pyautogui.keyDown('tab')
   pyautogui.keyUp('alt')
+
+def shuffleWindows(window_count = 1):
+  for i, _ in enumerate(range(window_count)):
+    pyautogui.keyDown('alt')
+    for __ in range(i):
+      pyautogui.keyDown('tab')
+    pyautogui.keyUp('alt')
+    sleep(0.01)
 
 def switchTab(tab_count = 1):
   pyautogui.keyDown('ctrlleft')

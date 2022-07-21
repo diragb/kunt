@@ -9,7 +9,6 @@ playsound('./assets/start.mp3')
 import sys
 import os
 from PIL import Image
-from pywinauto import Application
 import actions
 
 
@@ -54,19 +53,20 @@ def goToRandomWindow(names: List, is_afk: bool):
     if not is_afk: exec('\n'.join(target['target']['exec']))
     last_state['target'] = target
   except:
-    print('⚠️ Failed to bring windows to the foreground as they are minimized or have lost state.') 
+    print('⚠️  Failed to bring windows to the foreground as they are minimized or have lost state.')
+    print('🔃  Shuffling 5 windows...')
+    actions.shuffleWindows(5)
     target = random.choice(names)
-    app = Application(backend='uia')
-    app = app.connect(title_re=target['window_name'])
-    target_window = app.window(title_re=target['window_name'])
-    target_window.restore().maximize().set_focus()
+    target_window = win32gui.FindWindowEx(None, None, None, target['window_name'])
+    win32gui.SetForegroundWindow(target_window)
+    win32gui.ShowWindow(target_window, win32con.SW_MAXIMIZE)
     if not is_afk: exec('\n'.join(target['target']['exec']))
     last_state['target'] = target
-    print('✅ Handled window error.') 
+    print('✅  Handled window error.') 
 
 def do_random_shit(is_afk: bool):
   try:
-    if is_afk:
+    if not is_afk:
       win32gui.EnumWindows(winEnumHandler, None)
       for window in current_windows:
         for target in targets:
@@ -92,12 +92,17 @@ def replace_one_image(image_path: str):
   source = Image.open(get_random_source_image())
   if prelaunch['images']['rtl']: source = source.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
   new_target = source.resize((target.width, target.height))
+  target.close()
   new_target.save(image_path)
+  new_target.close()
   if prelaunch['images']['replace_thumbails']:
     thumbnail_path = image_path.replace(prelaunch['images']['match'], prelaunch['images']['thumbnail_match'])
     thumbnail = Image.open(thumbnail_path)
     new_thumbnail = source.resize((thumbnail.width, thumbnail.height))
+    thumbnail.close()
     new_thumbnail.save(thumbnail_path)
+    new_thumbnail.close()
+  source.close()
 
 def replace_images():
   images = os.listdir(prelaunch['images']['target_directory'])
@@ -115,12 +120,17 @@ def replace_one_image_with_afk(image_path: str):
   source = Image.open(get_random_afk_image())
   if prelaunch['images']['rtl']: source = source.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
   new_target = source.resize((target.width, target.height))
+  target.close()
   new_target.save(image_path)
+  new_target.close()
   if prelaunch['images']['replace_thumbails']:
     thumbnail_path = image_path.replace(prelaunch['images']['match'], prelaunch['images']['thumbnail_match'])
     thumbnail = Image.open(thumbnail_path)
     new_thumbnail = source.resize((thumbnail.width, thumbnail.height))
+    thumbnail.close()
     new_thumbnail.save(thumbnail_path)
+    new_thumbnail.close()
+  source.close()
 
 def replace_images_with_afk():
   images = os.listdir(prelaunch['images']['target_directory'])
@@ -149,6 +159,8 @@ if __name__ == '__main__':
   ')
 
   while True:
+    current_windows = []
+    available_targets = []
     is_afk = prelaunch['afk'] <= random.uniform(0, 1)
     if start != 0 and not already_slept:
       sleep(start - run / 2)
@@ -170,8 +182,11 @@ if __name__ == '__main__':
       except:
         print('🟢 Resume')
     if prelaunch['images']['replace']:
-      if not is_afk:
-        replace_images()
-      else:
-        replace_images_with_afk()
+      try:
+        if not is_afk:
+          replace_images()
+        else:
+          replace_images_with_afk()
+      except:
+        print('🔴 Could not replace image.')
     sleep(repeat - run / 2)
