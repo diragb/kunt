@@ -5,24 +5,27 @@ from time import sleep
 
 
 # Functions:
-def switchWindows(tab_count = 1):
+def switchWindows(tabCount = 1):
   pyautogui.keyDown('alt')
-  for _ in range(tab_count):
+  for _ in range(tabCount):
     pyautogui.keyDown('tab')
   pyautogui.keyUp('alt')
 
-def shuffleWindows(window_count = 1):
-  for i, _ in enumerate(range(window_count)):
+def shuffleWindows(windowCount = 1):
+  print(windowCount)
+  for i, _ in enumerate(range(windowCount)):
     pyautogui.keyDown('alt')
     for __ in range(i):
       pyautogui.keyDown('tab')
+      sleep(0.01)
     pyautogui.keyUp('alt')
     sleep(0.01)
 
-def switchTab(tab_count = 1):
+def switchTab(tabCount = 1):
   pyautogui.keyDown('ctrlleft')
-  for _ in range(tab_count):
+  for _ in range(tabCount):
     pyautogui.keyDown('tab')
+    sleep(0.01)
   pyautogui.keyUp('ctrlleft')
 
 def moveMouse(x = None, y = None):
@@ -30,10 +33,23 @@ def moveMouse(x = None, y = None):
   pyautogui.moveTo(x or random.randrange(width), y or random.randrange(height))
 
 def scroll():
-  pyautogui.scroll(random.choice([-1, 1]) * random.randrange(500, 1000))
+  scrollBy = random.choice([-1, 1]) * random.randrange(500, 1000)
+  pyautogui.scroll(scrollBy)
+  return scrollBy
 
 def spamCtrlLeftKey(count = 100):
+  pyautogui.PAUSE = 0
   for _ in range(count):
-    pyautogui.keyDown('ctrlleft')
-    pyautogui.keyUp('ctrlleft')
-  pyautogui.keyUp('ctrlleft')
+    pyautogui.keyDown('ctrlleft', None, False)
+    pyautogui.keyUp('ctrlleft', None, False)
+  pyautogui.PAUSE = 0.01
+
+def moveMouseToSafeSpace():
+  pyautogui.moveTo(340, 1060)
+
+def spamMouseClick(count = 100):
+  moveMouseToSafeSpace()
+  pyautogui.PAUSE = 0
+  for _ in range(count):
+    pyautogui.click()
+  pyautogui.PAUSE = 0.01

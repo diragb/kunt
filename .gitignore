@@ -2,6 +2,7 @@
 /assets/images/*.*
 /assets/night/*.*
 /assets/AFK/*.*
+/assets/videos/*/*.*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

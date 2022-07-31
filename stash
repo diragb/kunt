@@ -1,0 +1,46 @@
+import win32gui, win32con
+import actions
+from typing import List
+
+def winEnumHandler(hwnd, ctx):
+  if win32gui.IsWindowVisible(hwnd):
+    currentWindows.append({ 'hex': hex(hwnd), 'name': win32gui.GetWindowText(hwnd) })
+
+def goToRandomWindow(names: List, isAFK: bool):
+  try:
+    target = random.choice(names)
+    targetWindow = win32gui.FindWindowEx(None, None, None, target['window_name'])
+    win32gui.SetForegroundWindow(targetWindow)
+    win32gui.ShowWindow(targetWindow, win32con.SW_MAXIMIZE)
+    if not isAFK: exec('\n'.join(target['target']['exec']))
+    lastState['target'] = target
+  except:
+    print('⚠️  Failed to bring windows to the foreground as they are minimized or have lost state.')
+    print('🔃  Shuffling 5 windows...')
+    actions.shuffleWindows(5)
+    target = random.choice(names)
+    targetWindow = win32gui.FindWindowEx(None, None, None, target['window_name'])
+    win32gui.SetForegroundWindow(targetWindow)
+    win32gui.ShowWindow(targetWindow, win32con.SW_MAXIMIZE)
+    if not isAFK: exec('\n'.join(target['target']['exec']))
+    lastState['target'] = target
+    print('✅  Handled window error.') 
+
+def simulateWork(isAFK: bool):
+  try:
+    if not isAFK or len(lastState['target']) == 0:
+      win32gui.EnumWindows(winEnumHandler, None)
+      for window in currentWindows:
+        for target in targets:
+          if target['name'] in window['name']: availableTargets.append({ 'window_name': window['name'], 'target': target })
+      goToRandomWindow(availableTargets, isAFK)
+    else:
+      lt = lastState['target']
+      goToRandomWindow([ lastState['target'] ], isAFK)
+  except:
+    if not isAFK:
+      actions.switchWindows(random.randrange(3) + 1)
+      actions.switchTab(random.randrange(6) + 1)
+      actions.moveMouse()
+      actions.scroll()
+      actions.spamCtrlLeftKey(random.randrange(100) + 100)

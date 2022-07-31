@@ -18,14 +18,5 @@
       "actions.scroll()",
       "actions.spamCtrlLeftKey(random.randrange(100) + 100)"
     ]
-  },
-  {
-    "name": "Google Chrome",
-    "exec": [
-      "import actions",
-      "actions.moveMouse()",
-      "actions.scroll()",
-      "actions.spamCtrlLeftKey(random.randrange(100) + 100)"
-    ]
   }
 ]
