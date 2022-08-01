@@ -2,6 +2,7 @@
 import random
 import actions
 import pyautogui
+from time import sleep
 
 
 # Functions:
@@ -28,16 +29,16 @@ def loadWindows():
     try:
       window.maximize()
       window.activate()
-      actions.switchWindows(1)
+      actions.switchWindows(2)
     except:
       print('⚠️  Failed to load windows.')
 
 def simulateWork():
   [ mousePosition, activeWindow ] = remember()
-  actions.spamMouseClick(random.randrange(50, 150))
+  actions.spamMouseClick(random.randrange(100, 300))
   loadWindows()
   actions.switchTab(random.randrange(2, 6) + 1)
   actions.moveMouse()
   scrollBy = actions.scroll()
-  actions.spamCtrlLeftKey(random.randrange(50, 150))
+  actions.spamCtrlLeftKey(random.randrange(50, 300))
   return [ mousePosition, scrollBy, activeWindow ]

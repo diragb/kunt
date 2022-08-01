@@ -1,6 +1,6 @@
 # Packages:
 import random
-from time import sleep
+import time
 import json
 from playsound import playsound
 playsound('./assets/start.mp3')
@@ -72,12 +72,14 @@ if __name__ == '__main__':
     isAFK = prelaunchArguments['afk'] >= random.uniform(0, 1)
     isAFK = False
     if start != 0 and not alreadySlept:
-      sleep(start - (run / 2))
+      time.sleep(start - (run / 2))
       alreadySlept = True
     alertStop(noNotification, noPrint)
+    simulationStartTime = time.time()
     if not isAFK: [ mousePosition, scrollBy, activeWindow ] = simulateWork()
-    sleep(run)
+    simulationDuration = time.time() - simulationStartTime
+    time.sleep(run - simulationDuration)
     alertResume(noNotification, noPrint)
     handleWebcam(isAFK)
     if not isAFK: restore(mousePosition, scrollBy, activeWindow)
-    sleep(repeat - (run / 2))
+    time.sleep(repeat - run - 3.5)
